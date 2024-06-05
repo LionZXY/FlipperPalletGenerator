@@ -5,10 +5,11 @@ import java.io.File
 fun main() {
     val parsedModes = parse(File("Colors.json"))
     val modes = preventBadNames(parsedModes)
+    val lightMode = modes.values.find { it.name == "Light" }!!
     generatePalletFile(
         packageName = "com.flipperdevices.core.ui.theme.composable.pallete",
         outputFile = File("out/FlipperPalletV2.kt"),
-        mode = modes.values.find { it.name == "Light" }!!
+        mode = lightMode
     )
     modes.forEach { (_, mode) ->
         generateModeFile(
@@ -18,6 +19,13 @@ fun main() {
             mode = mode
         )
     }
+
+    generateAnimatePalletFile(
+        outputFile = File("out/AnimatedPallet.kt"),
+        mode = lightMode,
+        palletName = "FlipperPalletV2",
+        packageName = "com.flipperdevices.core.ui.theme.composable.pallete"
+    )
 }
 
 private fun preventBadNames(modes: Map<String, VariableMode>): Map<String, VariableMode> {

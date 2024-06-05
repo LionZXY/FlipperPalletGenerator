@@ -11,6 +11,8 @@ repositories {
 }
 
 dependencies {
+    implementation("androidx.compose.foundation:foundation:1.6.7")
+    implementation("androidx.compose.ui:ui:1.6.7")
     implementation("com.squareup:kotlinpoet:1.17.0")
     implementation("com.google.code.gson:gson:2.9.0")
     testImplementation(kotlin("test"))

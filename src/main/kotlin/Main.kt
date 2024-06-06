@@ -2,20 +2,23 @@ package org.example
 
 import java.io.File
 
+private const val PACKAGE_NAME = "com.flipperdevices.core.ui.theme.composable.pallete"
+private const val PALLET_NAME = "FlipperPalletV2"
+
 fun main() {
     val parsedModes = parse(File("Colors.json"))
     val modes = preventBadNames(parsedModes)
     val lightMode = modes.values.find { it.name == "Light" }!!
     generatePalletFile(
-        packageName = "com.flipperdevices.core.ui.theme.composable.pallete",
-        outputFile = File("out/FlipperPalletV2.kt"),
+        packageName = PACKAGE_NAME,
+        outputFile = File("out/$PALLET_NAME.kt"),
         mode = lightMode
     )
     modes.forEach { (_, mode) ->
         generateModeFile(
-            palletName = "FlipperPalletV2",
+            palletName = PALLET_NAME,
             folder = File("out"),
-            packageName = "com.flipperdevices.core.ui.theme.composable.pallete",
+            packageName = PACKAGE_NAME,
             mode = mode
         )
     }
@@ -23,8 +26,8 @@ fun main() {
     generateAnimatePalletFile(
         outputFile = File("out/AnimatedPallet.kt"),
         mode = lightMode,
-        palletName = "FlipperPalletV2",
-        packageName = "com.flipperdevices.core.ui.theme.composable.pallete"
+        palletName = PALLET_NAME,
+        packageName = PACKAGE_NAME
     )
 }
 

@@ -1,8 +1,9 @@
 package org.example
 
 import java.io.File
+import java.util.*
 
-private const val PACKAGE_NAME = "com.flipperdevices.core.ui.theme.composable.pallete"
+private const val PACKAGE_NAME = "com.flipperdevices.core.ui.theme.composable.pallet.generated"
 private const val PALLET_NAME = "FlipperPalletV2"
 
 fun main() {
@@ -42,7 +43,8 @@ private fun preventBadNames(modes: Map<String, VariableMode>): Map<String, Varia
 }
 
 private fun filterName(name: String): String {
-    var formattedName = name
+    var formattedName = name.replaceFirstChar { if (it.isLowerCase()) it else it.lowercaseChar() }
+    formattedName = formattedName
         .split("&")
         .mapIndexed { index, s ->
             if (index != 0) {

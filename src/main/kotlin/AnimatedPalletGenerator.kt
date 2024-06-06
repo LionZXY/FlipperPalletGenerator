@@ -77,6 +77,9 @@ private fun FileSpec.Builder.addAnimatedUtilFunction(): FileSpec.Builder {
 private fun generatePalletFunction(mode: VariableMode, packageName: String, palletName: String): FunSpec {
     val mainBuilder = FunSpec.builder("toAnimatePallet")
         .addModifiers(KModifier.INTERNAL)
+        .addAnnotation(AnnotationSpec.builder(ClassName("kotlin", "Suppress"))
+            .addMember(CodeBlock.of("\"LongMethod\""))
+            .build())
         .receiver(ClassName(packageName, palletName))
         .addAnnotation(ClassName("androidx.compose.runtime", "Composable"))
         .returns(ClassName(packageName, palletName))

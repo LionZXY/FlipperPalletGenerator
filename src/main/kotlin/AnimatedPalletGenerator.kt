@@ -17,6 +17,8 @@ fun generateAnimatePalletFile(
     val fileCode = FileSpec.builder(packageName, outputFile.nameWithoutExtension)
         .addAnimatedUtilFunction()
         .addFunction(generatePalletFunction(mode, packageName, palletName))
+        .addImport("androidx.compose.animation.core", "tween")
+        .addImport("androidx.compose.animation", "animateColorAsState")
         // Workaround for alias conflict bug
         .addAliasedImport(
             ClassName("$packageName.$palletName.Surface.Fade", "TransparentBlack"),
@@ -37,7 +39,7 @@ private fun FileSpec.Builder.addAnimatedUtilFunction(): FileSpec.Builder {
         .build()
     addProperty(durationSpec)
     val animationSpec = PropertySpec.builder(
-        "animateColor",
+        "animationSpec",
         AnimationSpec::class.parameterizedBy(ComposeColor::class),
         KModifier.PRIVATE
     ).initializer(
@@ -48,19 +50,18 @@ private fun FileSpec.Builder.addAnimatedUtilFunction(): FileSpec.Builder {
         )
     ).build()
     addProperty(animationSpec)
-    val animateColorSpec = FunSpec.builder("animateColor")
+    val animateColorSpec = FunSpec.builder("animatedColor")
         .addModifiers(KModifier.PRIVATE)
+        .addAnnotation(ClassName("androidx.compose.runtime", "Composable"))
         .addParameter(
             ParameterSpec.builder(
                 name = "targetValue",
                 type = ComposeColor::class
             ).build()
-        ).returns(
-            State::class.parameterizedBy(ComposeColor::class),
-        )
+        ).returns(ComposeColor::class)
         .addCode(
             CodeBlock.of(
-                "return %N(targetValue = targetValue, animationSpec = animationSpec)",
+                "return %N(targetValue = targetValue, animationSpec = animationSpec).value",
                 MemberName(
                     packageName = "androidx.compose.animation",
                     simpleName = "animateColorAsState",
@@ -74,7 +75,7 @@ private fun FileSpec.Builder.addAnimatedUtilFunction(): FileSpec.Builder {
 }
 
 private fun generatePalletFunction(mode: VariableMode, packageName: String, palletName: String): FunSpec {
-    val mainBuilder = FunSpec.builder("animatePallet")
+    val mainBuilder = FunSpec.builder("toAnimatePallet")
         .addModifiers(KModifier.INTERNAL)
         .receiver(ClassName(packageName, palletName))
         .addAnnotation(ClassName("androidx.compose.runtime", "Composable"))
@@ -84,7 +85,12 @@ private fun generatePalletFunction(mode: VariableMode, packageName: String, pall
     val codeBlock = CodeBlock.builder()
 
     codeBlock.add("return %T(\n⇥", ClassName(packageName, palletName))
-    addCollectionToCodeBlock(codeBlock, mode.colors, "$packageName.$palletName")
+    addCollectionToCodeBlock(
+        codeBlock,
+        mode.colors,
+        "$packageName.$palletName",
+        path = null
+    )
     codeBlock.add("⇤)")
 
     return mainBuilder
@@ -96,17 +102,23 @@ private fun addTreeElementToCodeBlock(
     codeBlock: CodeBlock.Builder,
     name: String,
     treeElement: ColorTreeElement,
-    packageName: String
+    packageName: String,
+    path: String
 ) {
     when (treeElement) {
         is ColorTreeElement.Collection -> {
             codeBlock.add("%N = %T(\n⇥", name, ClassName(packageName, name.capitalize()))
-            addCollectionToCodeBlock(codeBlock, treeElement, "$packageName.${name.capitalize()}")
+            addCollectionToCodeBlock(
+                codeBlock = codeBlock,
+                element = treeElement,
+                packageName = "$packageName.${name.capitalize()}",
+                path = path
+            )
             codeBlock.add("⇤)")
         }
 
         is ColorTreeElement.Color -> codeBlock.add(
-            "$name = animatedColor()",
+            "$name = animatedColor($path)",
             ClassName("androidx.compose.ui.graphics", "Color")
         )
     }
@@ -115,11 +127,18 @@ private fun addTreeElementToCodeBlock(
 private fun addCollectionToCodeBlock(
     codeBlock: CodeBlock.Builder,
     element: ColorTreeElement.Collection,
-    packageName: String
+    packageName: String,
+    path: String?
 ) {
     val entries = element.map.entries
     entries.forEachIndexed { index, (name, element) ->
-        addTreeElementToCodeBlock(codeBlock, name, element, packageName)
+        addTreeElementToCodeBlock(
+            codeBlock,
+            name,
+            element,
+            packageName,
+            path = if (path == null) name else "$path.$name"
+        )
         if (index != entries.size - 1) {
             codeBlock.add(",")
         }

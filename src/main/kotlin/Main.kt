@@ -3,22 +3,25 @@ package org.example
 import java.io.File
 import java.util.*
 
-private const val PACKAGE_NAME = "com.flipperdevices.core.ui.theme.composable.pallet.generated"
-private const val PALLET_NAME = "FlipperPalletV2"
+private const val PACKAGE_NAME = "com.flipperdevices.busybar.theme.generated"
+private const val PALLET_NAME = "BusyBarPallet"
 
 fun main() {
-    val parsedModes = parse(File("Colors.json"))
+    val parsedModes = parse(File("BSBPallet.json"))
     val modes = preventBadNames(parsedModes)
     val lightMode = modes.values.find { it.name == "Light" }!!
+    val outputDir = File("out")
+    outputDir.deleteRecursively()
+    outputDir.mkdirs()
     generatePalletFile(
         packageName = PACKAGE_NAME,
-        outputFile = File("out/$PALLET_NAME.kt"),
+        outputFile = File(outputDir, "$PALLET_NAME.kt"),
         mode = lightMode
     )
     modes.forEach { (_, mode) ->
         generateModeFile(
             palletName = PALLET_NAME,
-            folder = File("out"),
+            folder = outputDir,
             packageName = PACKAGE_NAME,
             mode = mode
         )

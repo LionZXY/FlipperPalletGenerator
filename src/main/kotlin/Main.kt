@@ -3,13 +3,13 @@ package org.example
 import java.io.File
 import java.util.*
 
-private const val PACKAGE_NAME = "com.flipperdevices.busybar.theme.generated"
+private const val PACKAGE_NAME = "com.flipperdevices.busybar.core.theme.generated"
 private const val PALLET_NAME = "BusyBarPallet"
 
 fun main() {
     val parsedModes = parse(File("BSBPallet.json"))
     val modes = preventBadNames(parsedModes)
-    val lightMode = modes.values.find { it.name == "Light" }!!
+    val lightMode = modes.values.find { it.name == "Light Mode" }!!
     val outputDir = File("out")
     outputDir.deleteRecursively()
     outputDir.mkdirs()

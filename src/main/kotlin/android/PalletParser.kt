@@ -1,4 +1,4 @@
-package org.example
+package org.example.android
 
 import com.google.gson.GsonBuilder
 import com.google.gson.reflect.TypeToken
@@ -48,7 +48,7 @@ fun parse(jsonFile: File): Map<String, VariableMode> {
     variables.forEach {
         modesImmutableMap = parseOneVariable(modesImmutableMap, it)
     }
-    println(modesImmutableMap)
+    // println(modesImmutableMap)
     return modesImmutableMap
 }
 

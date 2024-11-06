@@ -1,37 +1,65 @@
 package org.example
 
+import org.example.android.ColorTreeElement
+import org.example.android.VariableMode
+import org.example.android.generateAnimatePalletFile
+import org.example.android.generateModeFile
+import org.example.android.generatePalletFile
+import org.example.android.parse
+import org.example.ios.generateSwiftPalletFile
+import org.example.ios.generateXcodeColorAsset
 import java.io.File
-import java.util.*
 
 private const val PACKAGE_NAME = "com.flipperdevices.busybar.theme.generated"
-private const val PALLET_NAME = "BusyBarPallet"
+private const val PALLET_NAME = "Color"
+private const val PALLET_FILE = "BSB.json"
 
 fun main() {
-    val parsedModes = parse(File("BSBPallet.json"))
+    val parsedModes = parse(File(PALLET_FILE))
     val modes = preventBadNames(parsedModes)
     val lightMode = modes.values.find { it.name == "Light" }!!
+
+    // Output
     val outputDir = File("out")
+    val iosOutputDir =  File("out/iOS")
+    val androidOutputDir =  File("out/Android")
+
     outputDir.deleteRecursively()
     outputDir.mkdirs()
+    iosOutputDir.mkdirs()
+    androidOutputDir.mkdirs()
+
+    // Kotlin
     generatePalletFile(
         packageName = PACKAGE_NAME,
-        outputFile = File(outputDir, "$PALLET_NAME.kt"),
+        outputFile = File(androidOutputDir, "$PALLET_NAME.kt"),
         mode = lightMode
     )
     modes.forEach { (_, mode) ->
         generateModeFile(
             palletName = PALLET_NAME,
-            folder = outputDir,
+            folder = androidOutputDir,
             packageName = PACKAGE_NAME,
             mode = mode
         )
     }
 
     generateAnimatePalletFile(
-        outputFile = File("out/AnimatedPallet.kt"),
+        outputFile = File(androidOutputDir, "AnimatedPallet.kt"),
         mode = lightMode,
         palletName = PALLET_NAME,
         packageName = PACKAGE_NAME
+    )
+
+    generateSwiftPalletFile(
+        outputFile = File(iosOutputDir, "$PALLET_NAME.swift"),
+        modes = modes
+    )
+
+    val iosXcodeOutputDir = File(iosOutputDir, "Colors").apply { mkdirs() }
+    generateXcodeColorAsset(
+        outputFolder = iosXcodeOutputDir,
+        modes = modes
     )
 }
 
@@ -64,6 +92,6 @@ private fun filterName(name: String): String {
         }
         .joinToString("")
 
-    println("$name -> $formattedName")
+    // println("$name -> $formattedName")
     return formattedName
 }

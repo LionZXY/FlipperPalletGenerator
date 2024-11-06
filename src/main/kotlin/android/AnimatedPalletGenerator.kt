@@ -1,7 +1,6 @@
-package org.example
+package org.example.android
 
 import androidx.compose.animation.core.AnimationSpec
-import androidx.compose.runtime.State
 import com.squareup.kotlinpoet.*
 import com.squareup.kotlinpoet.ParameterizedTypeName.Companion.parameterizedBy
 import androidx.compose.ui.graphics.Color as ComposeColor

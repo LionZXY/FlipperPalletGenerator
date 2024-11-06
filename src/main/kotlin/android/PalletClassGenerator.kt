@@ -1,4 +1,4 @@
-package org.example
+package org.example.android
 
 import com.squareup.kotlinpoet.*
 import androidx.compose.ui.graphics.Color as ComposeColor

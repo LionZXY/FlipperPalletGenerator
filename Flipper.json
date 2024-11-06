@@ -522,7 +522,7 @@
         },
         {
             "id": "VariableID:3333:11146",
-            "name": "action/brunch_release/text/default",
+            "name": "action/branch_release/text/default",
             "description": "",
             "type": "COLOR",
             "valuesByMode": {
@@ -5514,7 +5514,7 @@
         },
         {
             "id": "VariableID:3633:11126",
-            "name": "action/brunch_rc/text/default",
+            "name": "action/branch_rc/text/default",
             "description": "",
             "type": "COLOR",
             "valuesByMode": {
@@ -5557,7 +5557,7 @@
         },
         {
             "id": "VariableID:3633:11131",
-            "name": "action/brunch_dev/text/default",
+            "name": "action/branch_dev/text/default",
             "description": "",
             "type": "COLOR",
             "valuesByMode": {
@@ -5600,7 +5600,7 @@
         },
         {
             "id": "VariableID:3633:11136",
-            "name": "action/brunch_custom/text/default",
+            "name": "action/branch_custom/text/default",
             "description": "",
             "type": "COLOR",
             "valuesByMode": {
@@ -7965,7 +7965,7 @@
         },
         {
             "id": "VariableID:3634:11199",
-            "name": "action/brunch_release/text/disabled",
+            "name": "action/branch_release/text/disabled",
             "description": "",
             "type": "COLOR",
             "valuesByMode": {
@@ -8008,7 +8008,7 @@
         },
         {
             "id": "VariableID:3634:11203",
-            "name": "action/brunch_rc/text/disabled",
+            "name": "action/branch_rc/text/disabled",
             "description": "",
             "type": "COLOR",
             "valuesByMode": {
@@ -8051,7 +8051,7 @@
         },
         {
             "id": "VariableID:3634:11207",
-            "name": "action/brunch_dev/text/disabled",
+            "name": "action/branch_dev/text/disabled",
             "description": "",
             "type": "COLOR",
             "valuesByMode": {
@@ -8094,7 +8094,7 @@
         },
         {
             "id": "VariableID:3634:11208",
-            "name": "action/brunch_custom/text/disabled",
+            "name": "action/branch_custom/text/disabled",
             "description": "",
             "type": "COLOR",
             "valuesByMode": {
@@ -9341,7 +9341,7 @@
         },
         {
             "id": "VariableID:3636:11158",
-            "name": "surface/menu/body/dufault",
+            "name": "surface/menu/body/default",
             "description": "",
             "type": "COLOR",
             "valuesByMode": {

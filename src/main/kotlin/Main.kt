@@ -51,8 +51,6 @@ fun main() {
         packageName = PACKAGE_NAME
     )
 
-    /*
-    TODO: The iOS code should be reworked to support a single-theme style (only dark or only light).
     generateSwiftPalletFile(
         outputFile = File(iosOutputDir, "$PALLET_NAME.swift"),
         modes = modes
@@ -62,7 +60,7 @@ fun main() {
     generateXcodeColorAsset(
         outputFolder = iosXcodeOutputDir,
         modes = modes
-    )*/
+    )
 }
 
 private fun preventBadNames(modes: Map<String, VariableMode>): Map<String, VariableMode> {

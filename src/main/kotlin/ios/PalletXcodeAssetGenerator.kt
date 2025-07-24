@@ -19,14 +19,18 @@ fun generateXcodeColorAsset(
     outputFolder: File,
     modes: Map<String, VariableMode>,
 ) {
-    val light = modes.values.first { it.name == "Light" }.colors.map
-    val dark = modes.values.first { it.name == "Dark" }.colors.map
-
     val rootContentFile = File(outputFolder, "Contents.json")
     val rootContent = json.encodeToString(XcodeContents.default)
     rootContentFile.writeText(rootContent)
 
-    process(light, dark, outputFolder)
+    if (modes.size == 1) {
+        val singleMode = modes.values.first().colors.map
+        processSingleTheme(singleMode, outputFolder)
+    } else {
+        val light = modes.values.first { it.name == "Light" }.colors.map
+        val dark = modes.values.first { it.name == "Dark" }.colors.map
+        process(light, dark, outputFolder)
+    }
 }
 
 private fun process(
@@ -82,6 +86,49 @@ private fun process(
 
                 val colorSet = XcodeColorSet(
                     colors = listOf(lightColorDetail, darkColorDetail),
+                    info = Info(author = "xcode", version = 1)
+                )
+
+                val name = colorName.capitalize() + name.capitalize()
+                val colorSetFolder = File(folder, "${name.capitalize()}.colorset").apply { mkdir() }
+                val contentFile = File(colorSetFolder, "Contents.json")
+                val content = json.encodeToString(colorSet)
+                contentFile.writeText(content)
+            }
+        }
+    }
+}
+
+private fun processSingleTheme(
+    colors: Map<String, ColorTreeElement>,
+    folder: File,
+    colorName: String = ""
+) {
+    colors.forEach { (name, element) ->
+        when (element) {
+            is ColorTreeElement.Collection -> {
+                println("Process color collection ${name + colorName}")
+                processSingleTheme(element.map, folder, colorName.capitalize() + name.capitalize())
+            }
+            is ColorTreeElement.Color -> {
+                val color = Color(
+                    colorSpace = "srgb",
+                    components = Components(
+                        alpha = element.alpha,
+                        red = element.red,
+                        green = element.green,
+                        blue = element.blue
+                    ),
+                )
+
+                val colorDetail = ColorDetail(
+                    color = color,
+                    idiom = "universal",
+                    appearances = null
+                )
+
+                val colorSet = XcodeColorSet(
+                    colors = listOf(colorDetail),
                     info = Info(author = "xcode", version = 1)
                 )
 

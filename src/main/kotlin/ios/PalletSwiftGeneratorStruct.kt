@@ -18,10 +18,14 @@ fun generateSwiftPalletFile(
 ) {
     val palletName = outputFile.nameWithoutExtension
 
-    val light = modes.values.first { it.name == "Light" }.colors
-    val dark = modes.values.first { it.name == "Dark" }.colors
-
-    val result = generateExtensionAndTypes(light, dark)
+    val result = if (modes.size == 1) {
+        val singleMode = modes.values.first().colors
+        generateExtensionAndTypesSingleTheme(singleMode)
+    } else {
+        val light = modes.values.first { it.name == "Light" }.colors
+        val dark = modes.values.first { it.name == "Dark" }.colors
+        generateExtensionAndTypes(light, dark)
+    }
 
     val fileSpec = FileSpec.builder(palletName)
         .addComment("""
@@ -79,6 +83,46 @@ private fun generateExtensionAndTypes(
             name = name,
             lightElement = lightElement,
             darkElement = darkElement,
+            isFirstLevel = true
+        )
+
+        types.add(typeBuilder.build())
+    }
+
+    return extensionBuilder.build() to types
+}
+
+private fun generateExtensionAndTypesSingleTheme(
+    colors: ColorTreeElement.Collection
+): Pair<ExtensionSpec, List<TypeSpec>> {
+
+    val extensionBuilder = ExtensionSpec
+        .builder(DeclaredTypeName("SwiftUI", "View"))
+
+    val types = mutableListOf<TypeSpec>()
+
+    colors.map.forEach { (name, element) ->
+        val className = name.replaceFirstChar {
+            if (it.isLowerCase()) it.titlecase(Locale.getDefault()) else it.toString()
+        } + "Colors"
+
+        extensionBuilder.addProperty(
+            PropertySpec
+                .builder(name, DeclaredTypeName("", className))
+                .getter(
+                    FunctionSpec.getterBuilder()
+                        .addStatement("$className()")
+                        .build()
+                )
+                .build()
+        )
+
+        val typeBuilder = TypeSpec.structBuilder(className)
+
+        addColorElementSingleTheme(
+            builder = typeBuilder,
+            name = name,
+            element = element,
             isFirstLevel = true
         )
 
@@ -155,6 +199,63 @@ private fun addColorElement(
                 )
             } else {
                 throw Exception("Mismatched types: expected Collection for dark mode at '$name'")
+            }
+        }
+    }
+}
+
+private fun addColorElementSingleTheme(
+    builder: TypeSpec.Builder,
+    name: String,
+    element: ColorTreeElement,
+    isFirstLevel: Boolean = false
+) {
+    when (element) {
+        is ColorTreeElement.Color -> {
+            builder.addProperty(
+                PropertySpec
+                    .builder(name, DeclaredTypeName("SwiftUI", "Color"))
+                    .initializer(
+                        "Color(red: %L, green: %L, blue: %L, opacity: %L)",
+                        element.red,
+                        element.green,
+                        element.blue,
+                        element.alpha
+                    )
+                    .build()
+            )
+        }
+
+        is ColorTreeElement.Collection -> {
+            println("Generate name collection $name")
+            val structName = name.replaceFirstChar {
+                if (it.isLowerCase()) it.titlecase(Locale.getDefault()) else it.toString()
+            } + "Colors"
+            println("Generate structName $name")
+
+            val innerBuilder = if (isFirstLevel) {
+                builder
+            } else {
+                TypeSpec.structBuilder(structName)
+            }
+
+            element.map.forEach { (innerName, innerElement) ->
+                addColorElementSingleTheme(
+                    builder = innerBuilder,
+                    name = innerName,
+                    element = innerElement
+                )
+            }
+
+            if (!isFirstLevel) {
+                builder.addType(innerBuilder.build())
+
+                builder.addProperty(
+                    PropertySpec
+                        .builder(name, DeclaredTypeName("", structName))
+                        .initializer("$structName()")
+                        .build()
+                )
             }
         }
     }

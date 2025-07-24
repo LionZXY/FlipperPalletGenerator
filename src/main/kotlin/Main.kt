@@ -12,12 +12,12 @@ import java.io.File
 
 private const val PACKAGE_NAME = "com.flipperdevices.busybar.theme.generated"
 private const val PALLET_NAME = "Color"
-private const val PALLET_FILE = "BSB.json"
+private const val PALLET_FILE = "BSBv2.json"
 
 fun main() {
     val parsedModes = parse(File(PALLET_FILE))
     val modes = preventBadNames(parsedModes)
-    val lightMode = modes.values.find { it.name == "Light" }!!
+    val lightMode = modes.values.find { it.name == "Dark Theme" }!!
 
     // Output
     val outputDir = File("out")
@@ -51,6 +51,8 @@ fun main() {
         packageName = PACKAGE_NAME
     )
 
+    /*
+    TODO: The iOS code should be reworked to support a single-theme style (only dark or only light).
     generateSwiftPalletFile(
         outputFile = File(iosOutputDir, "$PALLET_NAME.swift"),
         modes = modes
@@ -60,7 +62,7 @@ fun main() {
     generateXcodeColorAsset(
         outputFolder = iosXcodeOutputDir,
         modes = modes
-    )
+    )*/
 }
 
 private fun preventBadNames(modes: Map<String, VariableMode>): Map<String, VariableMode> {

@@ -7,12 +7,13 @@ import org.example.android.generateModeFile
 import org.example.android.generatePalletFile
 import org.example.android.parse
 import org.example.ios.generateSwiftPalletFile
+import org.example.ios.generateSwiftPalletFileFlat
 import org.example.ios.generateXcodeColorAsset
 import java.io.File
 
 private const val PACKAGE_NAME = "com.flipperdevices.busybar.theme.generated"
 private const val PALLET_NAME = "Color"
-private const val PALLET_FILE = "BSBv2.json"
+private const val PALLET_FILE = "BSB.json"
 
 fun main() {
     val parsedModes = parse(File(PALLET_FILE))
@@ -59,6 +60,11 @@ fun main() {
     val iosXcodeOutputDir = File(iosOutputDir, "Colors").apply { mkdirs() }
     generateXcodeColorAsset(
         outputFolder = iosXcodeOutputDir,
+        modes = modes
+    )
+
+    generateSwiftPalletFileFlat(
+        outputFile = File(iosOutputDir, "${PALLET_NAME}Fat.swift"),
         modes = modes
     )
 }

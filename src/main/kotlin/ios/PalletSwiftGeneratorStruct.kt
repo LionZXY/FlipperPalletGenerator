@@ -109,6 +109,7 @@ private fun generateExtensionAndTypesSingleTheme(
         extensionBuilder.addProperty(
             PropertySpec
                 .builder(name, DeclaredTypeName("", className))
+                .addModifiers(Modifier.STATIC)
                 .getter(
                     FunctionSpec.getterBuilder()
                         .addStatement("$className()")
@@ -215,6 +216,7 @@ private fun addColorElementSingleTheme(
             builder.addProperty(
                 PropertySpec
                     .builder(name, DeclaredTypeName("SwiftUI", "Color"))
+                    .addModifiers(Modifier.STATIC)
                     .initializer(
                         "Color(red: %L, green: %L, blue: %L, opacity: %L)",
                         element.red,
@@ -253,6 +255,7 @@ private fun addColorElementSingleTheme(
                 builder.addProperty(
                     PropertySpec
                         .builder(name, DeclaredTypeName("", structName))
+                        .addModifiers(Modifier.STATIC)
                         .initializer("$structName()")
                         .build()
                 )

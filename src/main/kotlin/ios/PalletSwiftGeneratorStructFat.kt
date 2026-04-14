@@ -4,6 +4,7 @@ import io.outfoxx.swiftpoet.DeclaredTypeName
 import io.outfoxx.swiftpoet.ExtensionSpec
 import io.outfoxx.swiftpoet.FileSpec
 import io.outfoxx.swiftpoet.FunctionSpec
+import io.outfoxx.swiftpoet.Modifier
 import io.outfoxx.swiftpoet.PropertySpec
 import org.example.android.ColorTreeElement
 import org.example.android.VariableMode
@@ -66,6 +67,7 @@ private fun addColorElementFlat(
 
             builder.addProperty(
                 PropertySpec.builder(propName, DeclaredTypeName("SwiftUI", "Color"))
+                    .addModifiers(Modifier.STATIC)
                     .getter(FunctionSpec.getterBuilder().addStatement(initializer).build())
                     .build()
             )

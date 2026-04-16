@@ -90,7 +90,7 @@ private fun filterName(name: String): String {
         }
         .joinToString("And")
     formattedName = formattedName
-        .split(" ", "_")
+        .split(" ", "_", "-")
         .mapIndexed { index, s ->
             if (index != 0) {
                 s.capitalize()
